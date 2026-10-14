@@ -4,6 +4,8 @@ import Player from './components/Player'
 import Display from './components/Display'
 import { PlayerContext } from './context/PlayerContext'
 
+export const url = 'https://spotify-clone-p6ik.onrender.com';
+
 const App = () => {
   const { audioRef, track, songsData } = useContext(PlayerContext);
 
