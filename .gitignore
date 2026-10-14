@@ -1,0 +1,17 @@
+
+# Environment files and secrets
+.env
+.env.*
+!.env.example
+
+# Node.js dependencies
+node_modules/
+**/node_modules/
+
+# Build output
+dist/
+**/dist/
+
+# Operating system files
+.DS_Store
+Thumbs.db
