@@ -1,5 +1,6 @@
 import { createContext, useEffect, useRef, useState } from "react";
 import axios from 'axios'
+import { songsData as localSongsData, albumsData as localAlbumsData } from '../assets/assets';
 
 export const PlayerContext = createContext();
 
@@ -8,7 +9,7 @@ const PlayerContextProvider = (props) => {
     const seekBg = useRef();
     const seekBar = useRef();
 
-    const url = 'https://spotify-clone-p6ik.onrender.com';
+    const url = import.meta.env.VITE_BACKEND_URL || 'https://spotify-clone-p6ik.onrender.com';
 
     const [songsData, setSongsData] = useState([]);
     const [albumsData, setAlbumsData] = useState([]);
@@ -18,6 +19,10 @@ const PlayerContextProvider = (props) => {
         currentTime: { second: 0, minute: 0 },
         totalTime: { second: 0, minute: 0 }
     });
+
+    const [searchQuery, setSearchQuery] = useState("");
+    const [searchResults, setSearchResults] = useState({ songs: [], albums: [] });
+    const [isSearching, setIsSearching] = useState(false);
 
     const play = () => {
         if (audioRef.current) {
@@ -34,34 +39,41 @@ const PlayerContextProvider = (props) => {
     }
 
     const playWithId = async (id) => {
-        await songsData.map((item) => {
-            if(id === item._id){
-                setTrack(item);
-            }
-        })
-
-        await audioRef.current.play();
-        setPlayerStatus(true);
+        const selected = songsData.find((item) => (item._id && item._id === id) || (item.id !== undefined && item.id === id));
+        if (selected) {
+            setTrack(selected);
+            setTimeout(() => {
+                if (audioRef.current) {
+                    audioRef.current.play().then(() => setPlayerStatus(true)).catch((e) => console.log(e));
+                }
+            }, 100);
+        }
     }
 
     const previous = async () => {
-        songsData.map(async (item,index) => {
-            if(track._id === item._id && index > 0){
-                await setTrack(songsData[index-1]);
-                await audioRef.current.play();
-                setPlayerStatus(true);
-            }
-        })
+        if (!track) return;
+        const index = songsData.findIndex((item) => (item._id && track._id && item._id === track._id) || (item.id !== undefined && track.id !== undefined && item.id === track.id));
+        if (index > 0) {
+            setTrack(songsData[index - 1]);
+            setTimeout(() => {
+                if (audioRef.current) {
+                    audioRef.current.play().then(() => setPlayerStatus(true)).catch((e) => console.log(e));
+                }
+            }, 100);
+        }
     }
 
     const next = async () => {
-        songsData.map(async (item,index) => {
-            if(track._id === item._id && index < songsData.length){
-                await setTrack(songsData[index+1]);
-                await audioRef.current.play();
-                setPlayerStatus(true);
-            }
-        })
+        if (!track) return;
+        const index = songsData.findIndex((item) => (item._id && track._id && item._id === track._id) || (item.id !== undefined && track.id !== undefined && item.id === track.id));
+        if (index >= 0 && index < songsData.length - 1) {
+            setTrack(songsData[index + 1]);
+            setTimeout(() => {
+                if (audioRef.current) {
+                    audioRef.current.play().then(() => setPlayerStatus(true)).catch((e) => console.log(e));
+                }
+            }, 100);
+        }
     }
 
     const seekSong = async (e) => {
@@ -70,47 +82,76 @@ const PlayerContextProvider = (props) => {
         }
     }
 
-    const getSongsData = async () => {
-  try {
-    console.log("Calling song API...");
+    const searchAll = async (query) => {
+        setSearchQuery(query);
+        const term = (query || "").trim().toLowerCase();
 
-    const response = await axios.get(`${url}/api/song/list`);
+        if (!term) {
+            setSearchResults({ songs: songsData, albums: albumsData });
+            return;
+        }
 
-    console.log("Song API response:", response);
-    console.log("Song API data:", response.data);
-    console.log("Songs:", response.data.songs);
+        setIsSearching(true);
+        try {
+            const response = await axios.get(`${url}/api/search?q=${encodeURIComponent(term)}`);
+            if (response.data && response.data.success) {
+                setSearchResults({
+                    songs: response.data.songs || [],
+                    albums: response.data.albums || []
+                });
+                setIsSearching(false);
+                return;
+            }
+        } catch (error) {
+            console.log("Backend search endpoint error, filtering local dataset:", error);
+        }
 
-    if (response.data.songs && response.data.songs.length > 0) {
-      setSongsData(response.data.songs);
-      setTrack(response.data.songs[0]);
+        // Filter against current active dataset
+        const matchedSongs = songsData.filter((s) =>
+            (s.name && s.name.toLowerCase().includes(term)) ||
+            (s.desc && s.desc.toLowerCase().includes(term)) ||
+            (s.album && s.album.toLowerCase().includes(term))
+        );
+        const matchedAlbums = albumsData.filter((a) =>
+            (a.name && a.name.toLowerCase().includes(term)) ||
+            (a.desc && a.desc.toLowerCase().includes(term))
+        );
+        setSearchResults({ songs: matchedSongs, albums: matchedAlbums });
+        setIsSearching(false);
     }
 
-  } catch (error) {
-    console.error("SONG FETCH ERROR:", error);
-    console.error("Message:", error.message);
-    console.error("Response:", error.response);
-    console.error("Status:", error.response?.status);
-    console.error("Data:", error.response?.data);
-  }
-};
+    const getSongsData = async () => {
+        try {
+            console.log("Calling song API...");
+            const response = await axios.get(`${url}/api/song/list`);
+            if (response.data.songs && response.data.songs.length > 0) {
+                setSongsData(response.data.songs);
+                setTrack(response.data.songs[0]);
+            } else {
+                setSongsData(localSongsData);
+                setTrack(localSongsData[0]);
+            }
+        } catch (error) {
+            console.error("SONG FETCH ERROR, using local dataset:", error.message);
+            setSongsData(localSongsData);
+            setTrack(localSongsData[0]);
+        }
+    };
 
     const getAlbumsData = async () => {
-  try {
-    console.log("Calling album API...");
-
-    const response = await axios.get(`${url}/api/album/list`);
-
-    console.log("Album API response:", response);
-    console.log("Album API data:", response.data);
-
-    if (response.data.albums) {
-      setAlbumsData(response.data.albums);
-    }
-
-  } catch (error) {
-    console.error("ALBUM FETCH ERROR:", error);
-  }
-};
+        try {
+            console.log("Calling album API...");
+            const response = await axios.get(`${url}/api/album/list`);
+            if (response.data.albums && response.data.albums.length > 0) {
+                setAlbumsData(response.data.albums);
+            } else {
+                setAlbumsData(localAlbumsData);
+            }
+        } catch (error) {
+            console.error("ALBUM FETCH ERROR, using local dataset:", error.message);
+            setAlbumsData(localAlbumsData);
+        }
+    };
 
     useEffect(() => {
         if (!audioRef.current) return;
@@ -141,6 +182,12 @@ const PlayerContextProvider = (props) => {
         getAlbumsData();
     }, []);
 
+    useEffect(() => {
+        if (!searchQuery) {
+            setSearchResults({ songs: songsData, albums: albumsData });
+        }
+    }, [songsData, albumsData]);
+
     const contextValue = {
         audioRef,
         seekBar,
@@ -158,7 +205,14 @@ const PlayerContextProvider = (props) => {
         next,
         seekSong,
         songsData,
-        albumsData
+        albumsData,
+        searchQuery,
+        setSearchQuery,
+        searchResults,
+        setSearchResults,
+        isSearching,
+        searchAll,
+        url
     };
 
     return (

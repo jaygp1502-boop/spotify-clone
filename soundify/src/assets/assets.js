@@ -180,3 +180,18 @@ export const songsData = [
         duration:"2:35"
     }
 ]
+
+export const searchDataset = (query) => {
+    if (!query || !query.trim()) return { songs: songsData, albums: albumsData };
+    const q = query.trim().toLowerCase();
+    const songs = songsData.filter(item => 
+        (item.name && item.name.toLowerCase().includes(q)) ||
+        (item.desc && item.desc.toLowerCase().includes(q)) ||
+        (item.album && item.album.toLowerCase().includes(q))
+    );
+    const albums = albumsData.filter(item => 
+        (item.name && item.name.toLowerCase().includes(q)) ||
+        (item.desc && item.desc.toLowerCase().includes(q))
+    );
+    return { songs, albums };
+};

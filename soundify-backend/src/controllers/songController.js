@@ -89,4 +89,25 @@ const removeSong = async (req, res) => {
     }
 }
 
-export { addSong, listSong, removeSong }
+const searchSong = async (req, res) => {
+    try {
+        const query = req.query.q || req.query.query || req.params.query || "";
+        if (!query.trim()) {
+            const allSongs = await songModel.find({});
+            return res.json({ success: true, songs: allSongs });
+        }
+        const regex = new RegExp(query.trim(), 'i');
+        const songs = await songModel.find({
+            $or: [
+                { name: regex },
+                { desc: regex },
+                { album: regex }
+            ]
+        });
+        res.json({ success: true, songs });
+    } catch (error) {
+        res.json({ success: false, message: error.message });
+    }
+}
+
+export { addSong, listSong, removeSong, searchSong }

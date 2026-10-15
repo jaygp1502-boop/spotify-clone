@@ -47,4 +47,24 @@ const removeAlbum = async (req, res) => {
     }
 }
 
-export { addAlbum, listAlbum, removeAlbum };
+const searchAlbum = async (req, res) => {
+    try {
+        const query = req.query.q || req.query.query || req.params.query || "";
+        if (!query.trim()) {
+            const allAlbums = await albumModel.find({});
+            return res.json({ success: true, albums: allAlbums });
+        }
+        const regex = new RegExp(query.trim(), 'i');
+        const albums = await albumModel.find({
+            $or: [
+                { name: regex },
+                { desc: regex }
+            ]
+        });
+        res.json({ success: true, albums });
+    } catch (error) {
+        res.json({ success: false, message: error.message });
+    }
+}
+
+export { addAlbum, listAlbum, removeAlbum, searchAlbum };

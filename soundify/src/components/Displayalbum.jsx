@@ -25,7 +25,7 @@ const Displayalbum = ({album}) => {
             <div className='mt-10 flex gap-8 flex-col md:flex-row md:items-end'>
                 <img className='w-84 rounded' src={albumData.image} alt="" />
                 <div className='flex flex-col'>
-                    <p>Playlist</p>
+                    <p>Album</p>
                     <h2 className='text-5xl font-bold mb-4 md:text-7xl'>{albumData.name}</h2>
                     <h4>{albumData.desc}</h4>
                     <p>
@@ -45,8 +45,8 @@ const Displayalbum = ({album}) => {
             </div>
             <hr />
             {
-                songsData.filter((item) => item.album === album.name).map((item,index) => (
-                    <div onClick={() => playWithId(item._id)} key={index} className='grid grid-cols-3 sm:grid-cols-4 gap-2 p-2 items-center text-[#a7a7a7] hover:bg-[#ffffff2b] cursor-pointer'>
+                songsData.filter((item) => (albumData.name && item.album === albumData.name) || (album && item.album === album.name)).map((item,index) => (
+                    <div onClick={() => playWithId(item._id || item.id)} key={index} className='grid grid-cols-3 sm:grid-cols-4 gap-2 p-2 items-center text-[#a7a7a7] hover:bg-[#ffffff2b] cursor-pointer'>
                         <p className='text-white'>
                             <b className='mr-4 text-[#a7a7a7]'>{index+1}</b>
                             <img className='inline w-10 mr-5' src={item.image} alt="" />
