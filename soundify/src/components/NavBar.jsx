@@ -37,7 +37,7 @@ const Navbar = () => {
                         className='bg-transparent text-sm text-white outline-none w-full placeholder:text-[#a7a7a7]'
                     />
                     {searchQuery && (
-                        <button 
+                        <button
                             type="button"
                             onClick={(e) => {
                                 e.stopPropagation();
@@ -52,7 +52,6 @@ const Navbar = () => {
                 </div>
 
                 <div className='flex items-center gap-4'>
-                    <p className='bg-black py-1 px-3 rounded-2xl text-[15px] cursor-pointer hover:bg-[#1a1a1a] transition hidden sm:block'>Install App</p>
                     <p className='bg-purple-500 w-7 h-7 text-black rounded-full flex items-center justify-center font-bold'>J</p>
                 </div>
             </div>

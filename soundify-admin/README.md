@@ -1,16 +1,98 @@
-# React + Vite
+# Soundify Admin Panel
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Soundify Admin is a modern React + Vite dashboard for managing songs, albums, and content on the Soundify music streaming platform.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🔐 Authentication & Authorization
 
-## React Compiler
+This admin panel includes complete authentication and authorization:
+- **Authorization Guard**: Unauthenticated users are strictly barred from seeing or accessing any administrative views, routes, or controls.
+- **Environment-based Credentials**: Two distinct admin accounts are configured directly via `.env`.
+- **Role-based Identity**: Each admin has their own name, username, password, and role (`Super Admin`, `Admin`, etc.).
+- **Session Persistence**: Active admin sessions are persisted across page refreshes via secure local session storage.
+- **Logout Support**: Full sign-out functionality from both Navbar and Sidebar.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the Oxlint configuration
+## 👥 Pre-Configured Administrator Accounts
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+The following credentials are configured in `.env` by default:
+
+| Admin | Username | Password | Role | Permissions |
+| :--- | :--- | :--- | :--- | :--- |
+| **Admin 1** | `admin1` | `admin1pass` | `Super Admin` | Full management access |
+| **Admin 2** | `admin2` | `admin2pass` | `Content Manager` | Content management access |
+
+> **Note**: You can customize these usernames, passwords, names, and roles anytime by editing `.env`.
+
+---
+
+## ⚙️ Environment Configuration (`.env`)
+
+```env
+# Administrator 1 (Super Admin)
+VITE_ADMIN1_USERNAME=admin1
+VITE_ADMIN1_PASSWORD=admin1pass
+VITE_ADMIN1_NAME=Super Admin
+VITE_ADMIN1_ROLE=Super Admin
+
+# Administrator 2 (Content Manager / Admin)
+VITE_ADMIN2_USERNAME=admin2
+VITE_ADMIN2_PASSWORD=admin2pass
+VITE_ADMIN2_NAME=Content Manager
+VITE_ADMIN2_ROLE=Admin
+```
+
+*(Non-prefixed versions `ADMIN1_USERNAME`, etc., are also supported through Vite's `envPrefix` configuration).*
+
+---
+
+## 🚀 Getting Started
+
+### 1. Install dependencies
+```bash
+npm install
+```
+
+### 2. Configure environment
+Ensure `.env` exists in the `soundify-admin` root directory (a pre-configured `.env` and `.env.example` are provided).
+
+### 3. Run development server
+```bash
+npm run dev
+```
+
+### 4. Build for production
+```bash
+npm run build
+```
+
+---
+
+## 📁 Project Structure
+
+```
+soundify-admin/
+├── .env                  # Admin 1 & Admin 2 credentials
+├── .env.example          # Environment variables template
+├── vite.config.js        # Vite config with envPrefix support
+├── package.json
+└── src/
+    ├── App.jsx           # Protected application shell & routing
+    ├── components/
+    │   ├── Login.jsx     # Admin authentication login screen
+    │   ├── Navbar.jsx    # Top navigation with admin identity & logout
+    │   ├── Sidebar.jsx   # Sidebar navigation with active states & user status
+    │   └── ProtectedRoute.jsx # Route authorization wrapper
+    ├── context/
+    │   ├── AuthContext.jsx # Authentication state & session management
+    │   └── useAuth.js      # Custom React authentication hook
+    ├── utils/
+    │   └── authConfig.js   # Credential loader from .env
+    └── pages/
+        ├── AddSong.jsx   # Song creation
+        ├── ListSong.jsx  # Songs list & management
+        ├── AddAlbum.jsx  # Album creation
+        └── ListAlbum.jsx # Albums list & management
+```

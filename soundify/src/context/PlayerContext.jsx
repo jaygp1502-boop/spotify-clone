@@ -20,6 +20,9 @@ const PlayerContextProvider = (props) => {
         totalTime: { second: 0, minute: 0 }
     });
 
+    const [isShuffling, setIsShuffling] = useState(false);
+    const [isLooping, setIsLooping] = useState(false);
+
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState({ songs: [], albums: [] });
     const [isSearching, setIsSearching] = useState(false);
@@ -39,7 +42,11 @@ const PlayerContextProvider = (props) => {
     }
 
     const playWithId = async (id) => {
-        const selected = songsData.find((item) => (item._id && item._id === id) || (item.id !== undefined && item.id === id));
+        const selected = songsData.find(
+           (item) =>
+               (item._id && item._id === id) ||
+               (item.id !== undefined && item.id === id)
+        );
         if (selected) {
             setTrack(selected);
             setTimeout(() => {
@@ -52,7 +59,13 @@ const PlayerContextProvider = (props) => {
 
     const previous = async () => {
         if (!track) return;
-        const index = songsData.findIndex((item) => (item._id && track._id && item._id === track._id) || (item.id !== undefined && track.id !== undefined && item.id === track.id));
+        const index = songsData.findIndex(
+           (item) =>
+               (item._id && track._id && item._id === track._id) ||
+               (item.id !== undefined &&
+                   track.id !== undefined &&
+                   item.id === track.id)
+        );
         if (index > 0) {
             setTrack(songsData[index - 1]);
             setTimeout(() => {
@@ -63,18 +76,61 @@ const PlayerContextProvider = (props) => {
         }
     }
 
-    const next = async () => {
-        if (!track) return;
-        const index = songsData.findIndex((item) => (item._id && track._id && item._id === track._id) || (item.id !== undefined && track.id !== undefined && item.id === track.id));
-        if (index >= 0 && index < songsData.length - 1) {
-            setTrack(songsData[index + 1]);
-            setTimeout(() => {
-                if (audioRef.current) {
-                    audioRef.current.play().then(() => setPlayerStatus(true)).catch((e) => console.log(e));
-                }
-            }, 100);
-        }
-    }
+       const next = async () => {
+       if (!track || songsData.length === 0) return;
+
+       const index = songsData.findIndex(
+           (item) =>
+               (item._id && track._id && item._id === track._id) ||
+               (item.id !== undefined &&
+                   track.id !== undefined &&
+                   item.id === track.id)
+       );
+
+       if (index === -1) return;
+
+       // Repeat the current song
+       if (isLooping) {
+           if (audioRef.current) {
+               audioRef.current.currentTime = 0;
+               audioRef.current.play()
+                   .then(() => setPlayerStatus(true))
+                   .catch((e) => console.log(e));
+           }
+           return;
+       }
+
+       let nextTrack;
+
+       // Shuffle: choose a random song other than the current one
+       if (isShuffling) {
+           const otherIndexes = songsData
+               .map((_, i) => i)
+               .filter((i) => i !== index);
+
+           if (otherIndexes.length === 0) return;
+
+           const randomIndex =
+               otherIndexes[Math.floor(Math.random() * otherIndexes.length)];
+
+           nextTrack = songsData[randomIndex];
+       } else if (index < songsData.length - 1) {
+           // Normal playback: play the next song
+           nextTrack = songsData[index + 1];
+       }
+
+       if (nextTrack) {
+           setTrack(nextTrack);
+
+           setTimeout(() => {
+               if (audioRef.current) {
+                   audioRef.current.play()
+                       .then(() => setPlayerStatus(true))
+                       .catch((e) => console.log(e));
+               }
+           }, 100);
+       }
+   };
 
     const seekSong = async (e) => {
         if (audioRef.current && audioRef.current.duration) {
@@ -175,7 +231,11 @@ const PlayerContextProvider = (props) => {
                 }
             });
         };
-    }, [track]);
+
+        audioRef.current.onended = () => {
+            next();
+        };
+    }, [track, isLooping, isShuffling]);
 
     useEffect(() => {
         getSongsData();
@@ -212,7 +272,11 @@ const PlayerContextProvider = (props) => {
         setSearchResults,
         isSearching,
         searchAll,
-        url
+        url,
+        isShuffling,
+        setIsShuffling,
+        isLooping,
+        setIsLooping,
     };
 
     return (

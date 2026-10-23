@@ -19,7 +19,7 @@ const App = () => {
         </>
       ) : (
         <div className='h-full flex items-center justify-center text-white'>
-          <p>Loading...</p>
+          <p>Loading..</p>
         </div>
       )}
       <audio ref={audioRef} src={track ? track.file : ""} preload='auto'></audio>

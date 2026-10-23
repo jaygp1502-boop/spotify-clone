@@ -1,65 +1,66 @@
-import React,{useState, useEffect} from 'react'
-import axios from 'axios';
-import { url } from '../App';
-import { toast } from 'react-toastify';
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+import { url } from '../App'
+import { toast } from 'react-toastify'
+
+// Image | Name | Album | Duration | Action  (same proportions as the screenshot)
+// Inline style so the columns always work, even if Tailwind skips the class.
+const rowStyle = {
+    display: 'grid',
+    gridTemplateColumns: '0.5fr 1fr 2fr 1fr 0.6fr',
+    alignItems: 'center',
+    gap: '12px',
+    padding: '0 16px',
+}
 
 const ListSong = () => {
+    const [data, setData] = useState([])
 
-    const [data, setData] = useState([]);
-
-    const featchSong = async () => {
-
+    const fetchSong = async () => {
         try {
-            const response = await axios.get(`${url}/api/song/list`);
-            if(response.data.success){
-                setData(response.data.songs);
-            }
-        }
-        catch (error) {
-            toast.error("Error occured");
+            const response = await axios.get(`${url}/api/song/list`)
+            if (response.data.success) setData(response.data.songs)
+        } catch {
+            toast.error("Error fetching songs")
         }
     }
 
     const removeSong = async (id) => {
-        try{
-            const response = await axios.post(`${url}/api/song/remove`,{id});
-            if(response.data.success){
-                toast.success(response.data.message);
-                await featchSong();
+        try {
+            const response = await axios.post(`${url}/api/song/remove`, { id })
+            if (response.data.success) {
+                toast.success(response.data.message)
+                await fetchSong()
             }
-        }catch(error){
-            toast.error("Error occured");
+        } catch {
+            toast.error("Error removing song")
         }
-
     }
 
-    useEffect(() => {
-        featchSong();
-    },[])
+    useEffect(() => { fetchSong() }, [])
 
     return (
         <div>
-            <p>All Songs List</p>
-            <br />
-            <div>
-                <div className='grid grid-cols-5 items-center gap-2 p-3 border border-gray-300 text-sm mr-5 bg-gray-100'>
+            <p className='mb-6'>All Songs List</p>
+
+            <div className='border border-gray-300'>
+                <div style={rowStyle} className='py-3 bg-gray-100 border-b border-gray-300 text-black'>
                     <b>Image</b>
                     <b>Name</b>
                     <b>Album</b>
                     <b>Duration</b>
                     <b>Action</b>
                 </div>
-                {data.map((item,index)=>{
-                    return(
-                        <div key={index} className='grid grid-cols-5 sm:grid-cols-5 items-center gap-2.5 p-3 border-gray-300 text-sm mr-5'>
-                            <img src={item.image} className = 'w-12' alt="" />
-                            <p>{item.name}</p>
-                            <p>{item.album}</p>
-                            <p>{item.duration}</p>
-                            <p className='cursor-pointer' onClick={() => removeSong(item._id)}>x</p>
-                        </div>
-                    )
-                })}
+
+                {data.map((item, index) => (
+                    <div key={index} style={rowStyle} className='py-4 border-b border-gray-300 last:border-b-0'>
+                        <img src={item.image} style={{ width: 60, height: 60, objectFit: 'cover' }} alt="" />
+                        <p>{item.name}</p>
+                        <p>{item.album}</p>
+                        <p>{item.duration}</p>
+                        <p onClick={() => removeSong(item._id)} className='cursor-pointer'>x</p>
+                    </div>
+                ))}
             </div>
         </div>
     )

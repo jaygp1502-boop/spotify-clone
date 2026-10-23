@@ -31,9 +31,9 @@ const Displayalbum = ({album}) => {
                     <p>
                         <img className='inline-block w-5 ' src={assets.spotify_logo} alt="" />
                         <b> Spotify </b>
-                        • 1,32,123 likes
-                        •<b> 50 songs, </b>
-                        about 2hr 30 min
+                        • 32,123 likes
+                        •<b> 5 songs, </b>
+                        about 30 min
                     </p>
                 </div>
             </div>
