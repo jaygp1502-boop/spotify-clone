@@ -1,5 +1,6 @@
 import React, { createContext, useState, useMemo } from 'react';
-import { getAdminCredentials } from '../utils/authConfig';
+import axios from 'axios';
+import { url } from '../App';
 
 const AuthContext = createContext(null);
 
@@ -10,17 +11,9 @@ const getInitialSession = () => {
         const stored = localStorage.getItem(SESSION_STORAGE_KEY);
         if (!stored) return null;
         const parsed = JSON.parse(stored);
-        const adminConfig = getAdminCredentials();
 
-        if (adminConfig && adminConfig.username === parsed.username) {
-            return {
-                id: adminConfig.id,
-                username: adminConfig.username,
-                name: adminConfig.name,
-                role: adminConfig.role,
-                token: parsed.token || `token_${Date.now()}`,
-                loginTime: parsed.loginTime || new Date().toISOString(),
-            };
+        if (parsed && parsed.username && parsed.token) {
+            return parsed;
         }
         localStorage.removeItem(SESSION_STORAGE_KEY);
         return null;
@@ -32,33 +25,37 @@ const getInitialSession = () => {
 export const AuthProvider = ({ children }) => {
     const [admin, setAdmin] = useState(getInitialSession);
 
-    const login = (username, password) => {
-        const adminConfig = getAdminCredentials();
+    const login = async (username, password) => {
+        try {
+            const response = await axios.post(`${url}/api/admin/login`, {
+                username: (username || '').trim(),
+                password: (password || '').trim(),
+            });
 
-        if (
-            adminConfig &&
-            adminConfig.username === (username || '').trim() &&
-            adminConfig.password === (password || '').trim()
-        ) {
-            const sessionData = {
-                id: adminConfig.id,
-                username: adminConfig.username,
-                name: adminConfig.name,
-                role: adminConfig.role,
-                token: `admin_token_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
-                loginTime: new Date().toISOString(),
-            };
-
-            try {
-                localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(sessionData));
-            } catch {
-                // Ignore storage errors
+            if (response.data && response.data.success) {
+                const sessionData = response.data.admin;
+                try {
+                    localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(sessionData));
+                } catch {
+                    // Ignore storage errors
+                }
+                setAdmin(sessionData);
+                return { success: true, admin: sessionData };
+            } else {
+                return {
+                    success: false,
+                    message: response.data?.message || 'Invalid username or password.',
+                };
             }
-            setAdmin(sessionData);
-            return { success: true, admin: sessionData };
+        } catch (error) {
+            return {
+                success: false,
+                message:
+                    error.response?.data?.message ||
+                    error.message ||
+                    'Unable to connect to server. Please try again.',
+            };
         }
-
-        return { success: false, message: 'Invalid username or password.' };
     };
 
     const logout = () => {

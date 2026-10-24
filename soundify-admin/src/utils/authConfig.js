@@ -1,16 +1,11 @@
+/**
+ * Note: Admin authentication is now managed via the backend database API (/api/admin/login).
+ * Credentials are no longer stored in or read from the frontend .env bundle.
+ */
 export const getAdminCredentials = () => {
-    const env = import.meta.env || {};
+    return null;
+};
 
-    const username = env.VITE_ADMIN_USERNAME;
-    const password = env.VITE_ADMIN_PASSWORD;
-
-    if (!username || !password) return null;
-
-    return {
-        id: 'admin',
-        username,
-        password,
-        name: env.VITE_ADMIN_NAME || 'Admin',
-        role: env.VITE_ADMIN_ROLE || 'Admin',
-    };
+export default {
+    getAdminCredentials,
 };

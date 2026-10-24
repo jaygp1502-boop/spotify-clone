@@ -12,7 +12,7 @@ import Login from './components/Login';
 import { AuthProvider } from './context/AuthContext';
 import useAuth from './context/useAuth';
 
-export const url = 'https://spotify-clone-p6ik.onrender.com';
+export const url = import.meta.env.VITE_BACKEND_URL || 'https://spotify-clone-p6ik.onrender.com';
 
 const AdminPanel = () => {
     const { isAuthenticated } = useAuth();

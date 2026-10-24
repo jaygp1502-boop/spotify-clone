@@ -5,6 +5,8 @@ import songRouter from './src/routes/songRoute.js';
 import connectDb from './src/config/mongodb.js';
 import connectCloudinary from './src/config/cloudinary.js';
 import albumRouter from './src/routes/albumRoute.js';
+import adminRouter from './src/routes/adminRoute.js';
+import { ensureAdminExists } from './src/controllers/adminController.js';
 import songModel from './src/models/songModel.js';
 import albumModel from './src/models/albumModel.js';
 
@@ -14,6 +16,8 @@ const port = process.env.PORT || 4000;
 connectDb();
 connectCloudinary();
 
+// Ensure admin exists once DB connects
+ensureAdminExists();
 
 //Middleware
 app.use(express.json());
@@ -23,6 +27,7 @@ app.use(cors());
 //initializing route
 app.use("/api/song",songRouter)
 app.use("/api/album",albumRouter)
+app.use("/api/admin",adminRouter)
 
 app.get('/api/search', async (req, res) => {
     try {

@@ -10,12 +10,13 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
     "server": "nodemon server.js",
-    "seed": "node seedData.js"
+    "seed": "node seedData.js",
+    "seed:admin": "node seedAdmin.js"
   },
   "dependencies": {
     "cloudinary": "^2.11.0",
     "cors": "^2.8.6",
-    "dotenv": "^18.0.4",
+    "dotenv": "^16.4.7",
     "express": "^5.2.1",
     "mongoose": "^9.10.2",
     "multer": "^2.4.0",

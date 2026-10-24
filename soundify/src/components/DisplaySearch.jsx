@@ -8,9 +8,7 @@ import { assets } from '../assets/assets'
 const DisplaySearch = () => {
     const { 
         searchQuery, 
-        setSearchQuery, 
         searchResults, 
-        searchAll, 
         isSearching, 
         playWithId,
         songsData,
@@ -24,30 +22,6 @@ const DisplaySearch = () => {
     return (
         <>
             <Navbar />
-
-            {/* Search Input Box */}
-            <div className='my-6'>
-                <div className='flex items-center gap-3 bg-[#242424] hover:bg-[#2a2a2a] px-4 py-3 rounded-full max-w-xl border border-transparent focus-within:border-white transition'>
-                    <img className='w-5 opacity-80' src={assets.search_icon} alt="Search" />
-                    <input 
-                        type="text" 
-                        placeholder="What do you want to listen to? (Songs, Artists, Albums)"
-                        value={searchQuery}
-                        onChange={(e) => searchAll(e.target.value)}
-                        className='bg-transparent text-white text-base outline-none w-full placeholder:text-[#a7a7a7]'
-                        autoFocus
-                    />
-                    {searchQuery && (
-                        <button 
-                            onClick={() => searchAll('')}
-                            className='text-[#a7a7a7] hover:text-white px-2 text-sm font-bold'
-                            title="Clear search"
-                        >
-                            ✕
-                        </button>
-                    )}
-                </div>
-            </div>
 
             {/* Search Feedback / State */}
             {isSearching && (

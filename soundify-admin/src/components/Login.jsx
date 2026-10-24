@@ -18,7 +18,7 @@ const Login = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
 
@@ -29,16 +29,21 @@ const Login = () => {
 
         setLoading(true);
 
-        setTimeout(() => {
-            const result = login(username, password);
+        try {
+            const result = await login(username, password);
             if (result.success) {
-                toast.success(`Welcome back, ${result.admin.name}!`);
+                toast.success(`Welcome back, ${result.admin?.name || result.admin?.username || 'Admin'}!`);
             } else {
-                setError(result.message);
-                toast.error(result.message);
+                setError(result.message || 'Invalid username or password.');
+                toast.error(result.message || 'Invalid username or password.');
             }
+        } catch (err) {
+            const msg = err.message || 'An error occurred during login.';
+            setError(msg);
+            toast.error(msg);
+        } finally {
             setLoading(false);
-        }, 300);
+        }
     };
 
     return (

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useRef, useEffect } from 'react'
 import { assets } from '../assets/assets'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { PlayerContext } from '../context/PlayerContext'
@@ -7,6 +7,14 @@ const Navbar = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { searchQuery, searchAll } = useContext(PlayerContext);
+    const searchInputRef = useRef(null);
+
+    // Auto-focus search input when on /search page
+    useEffect(() => {
+        if (location.pathname === '/search' && searchInputRef.current) {
+            searchInputRef.current.focus();
+        }
+    }, [location.pathname]);
 
     return (
         <div className='w-full mb-4'>
@@ -25,6 +33,7 @@ const Navbar = () => {
                 >
                     <img className='w-4 opacity-75' src={assets.search_icon} alt="Search" />
                     <input 
+                        ref={searchInputRef}
                         type="text" 
                         placeholder="What do you want to play?"
                         value={searchQuery}
