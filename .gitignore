@@ -1,9 +1,3 @@
-
-# Environment files and secrets
-.env
-.env.*
-!.env.example
-
 # Node.js dependencies
 node_modules/
 **/node_modules/
