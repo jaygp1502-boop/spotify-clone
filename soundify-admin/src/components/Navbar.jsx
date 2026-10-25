@@ -14,29 +14,10 @@ const Navbar = () => {
         <div className='navbar w-full border-b-2 border-gray-800 px-5 sm:px-12 py-4 text-lg flex items-center justify-between bg-[#121212] sticky top-0 z-20'>
             <div className='flex items-center gap-3'>
                 <p className='font-semibold text-white tracking-wide'>Admin Panel</p>
-                {admin?.role && (
-                    <span className='hidden sm:inline-block text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#003A10] text-[#1db954] border border-[#1db954]/40 uppercase tracking-wider'>
-                        {admin.role}
-                    </span>
-                )}
             </div>
 
             {admin && (
                 <div className='flex items-center gap-3 sm:gap-5'>
-                    {/* Admin identity chip */}
-                    <div className='flex items-center gap-2.5 bg-[#1e1e1e] border border-gray-700/70 rounded-full py-1.5 px-3 sm:px-4'>
-                        <div className='w-7 h-7 rounded-full bg-[#1db954] text-black font-bold flex items-center justify-center text-xs'>
-                            {admin.name ? admin.name.charAt(0).toUpperCase() : 'A'}
-                        </div>
-                        <div className='flex flex-col text-left'>
-                            <span className='text-xs font-medium text-white leading-tight'>
-                                {admin.name || admin.username}
-                            </span>
-                            <span className='text-[10px] text-gray-400 font-mono leading-none'>
-                                @{admin.username}
-                            </span>
-                        </div>
-                    </div>
 
                     {/* Logout Button */}
                     <button

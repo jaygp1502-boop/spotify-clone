@@ -16,13 +16,12 @@ const Display = () => {
     const currentAlbum = isAlbum && albumsData.length > 0
     ? albumsData.find(
         (x) =>
-            (x._id && x._id == albumId) ||
-            (x.id !== undefined && x.id == albumId)
+            (x._id && x._id == albumId)
       )
     : null;
 
     const bgColor = currentAlbum
-        ? (currentAlbum.bgColour || currentAlbum.bgColor || "#121212")
+        ? (currentAlbum.bgColour || "#121212")
         : "#121212";
 
     useEffect(() => {

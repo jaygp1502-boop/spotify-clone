@@ -60,7 +60,7 @@ const AddSong = () => {
     const inputClass = 'bg-black border-2 border-gray-500 text-white px-4 py-3 w-full max-w-xl outline-none focus:border-white placeholder:text-gray-500'
 
     return (
-        <form onSubmit={onSubmitHandler} className='bg-black min-h-screen text-gray-300 flex flex-col gap-8 p-8'>
+        <form onSubmit={onSubmitHandler} className='bg-black min-h-screen text-gray-300 flex flex-col gap-8 p-8 text-white'>
 
             <div className='flex gap-8'>
                 <div className='flex flex-col gap-3'>

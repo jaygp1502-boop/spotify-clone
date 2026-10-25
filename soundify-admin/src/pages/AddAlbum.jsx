@@ -45,7 +45,7 @@ const AddAlbum = () => {
     const inputClass = 'border-2 border-gray-400 bg-transparent px-4 py-3 w-full max-w-xl outline-none placeholder:text-gray-400'
 
     return (
-        <form onSubmit={onSubmitHandler} className='flex flex-col gap-8 text-gray-700'>
+        <form onSubmit={onSubmitHandler} className='flex flex-col gap-8 text-gray-700 text-white'>
 
             <div className='flex flex-col gap-3'>
                 <p>Upload Image</p>

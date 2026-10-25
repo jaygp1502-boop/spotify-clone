@@ -31,7 +31,7 @@ const Sidebar = () => {
                         albumsData.map((item, index) => (
                             <div 
                                 key={index} 
-                                onClick={() => navigator(`/album/${item._id || item.id}`)}
+                                onClick={() => navigator(`/album/${item._id}`)}
                                 className='flex items-center gap-3 p-2 rounded-lg hover:bg-[#242424] cursor-pointer transition'
                             >
                                 <img className='w-11 h-11 rounded object-cover' src={item.image} alt={item.name} />

@@ -1,9 +1,5 @@
 import adminModel from '../models/adminModel.js';
 
-/**
- * Ensures at least one default admin account exists in MongoDB.
- * Defaults to Adminuser / Adminpass if no admin exists yet.
- */
 export const ensureAdminExists = async () => {
     try {
         const count = await adminModel.countDocuments();

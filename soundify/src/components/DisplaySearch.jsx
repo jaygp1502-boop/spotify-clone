@@ -35,7 +35,7 @@ const DisplaySearch = () => {
                     <img className='w-16 opacity-40 mb-4' src={assets.search_icon} alt="" />
                     <h2 className='text-2xl font-bold mb-2'>No results found for "{searchQuery}"</h2>
                     <p className='text-gray-400 max-w-md'>
-                        Please check your spelling or try searching for another song, artist, or album title.
+                        Please check your spelling or try searching for another song or album title.
                     </p>
                 </div>
             )}
@@ -50,7 +50,7 @@ const DisplaySearch = () => {
                         {displaySongs.map((item, index) => (
                             <div 
                                 key={index} 
-                                onClick={() => playWithId(item._id || item.id)}
+                                onClick={() => playWithId(item._id)}
                                 className='grid grid-cols-3 sm:grid-cols-4 gap-2 p-2 px-4 items-center text-[#a7a7a7] hover:bg-[#ffffff2b] rounded-lg cursor-pointer transition'
                             >
                                 <div className='flex items-center text-white col-span-2 sm:col-span-1'>
@@ -82,7 +82,7 @@ const DisplaySearch = () => {
                                 key={index} 
                                 name={item.name} 
                                 desc={item.desc} 
-                                id={item._id || item.id} 
+                                id={item._id} 
                                 image={item.image}
                             />
                         ))}

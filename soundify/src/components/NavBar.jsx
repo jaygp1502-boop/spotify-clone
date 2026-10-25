@@ -61,7 +61,7 @@ const Navbar = () => {
                 </div>
 
                 <div className='flex items-center gap-4'>
-                    <p className='bg-purple-500 w-7 h-7 text-black rounded-full flex items-center justify-center font-bold'>J</p>
+                    <p className='bg-purple-500 w-7 h-7 text-black rounded-full flex items-center justify-center font-bold'>S</p>
                 </div>
             </div>
         </div>
